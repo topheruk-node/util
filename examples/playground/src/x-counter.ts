@@ -1,4 +1,6 @@
-import { customElement, CustomElement, html } from "core-x";
+import { CustomElement, html } from "core-x";
+
+declare global { interface HTMLElementTagNameMap { "x-counter": XCounter; } }
 
 export class XCounter extends CustomElement {
     value = 0;
@@ -18,6 +20,5 @@ export class XCounter extends CustomElement {
     }
 }
 
-customElement("x-counter", XCounter);
+CustomElement.define("x-counter", XCounter);
 
-declare global { interface HTMLElementTagNameMap { "x-counter": XCounter; } }

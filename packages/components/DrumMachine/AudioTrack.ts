@@ -1,4 +1,6 @@
-import { CustomElement, customElement, dispatchCustomEvent, html, HTMLElementWrapper } from "core-x";
+import { CustomElement, dispatchCustomEvent, html } from "core-x";
+
+declare global { interface HTMLElementTagNameMap { "audio-track": HTMLAudioTrackElement; } }
 
 const customEvent = dispatchCustomEvent();
 
@@ -59,6 +61,5 @@ export class HTMLAudioTrackElement extends CustomElement {
     }
 }
 
-declare global { interface HTMLElementTagNameMap { "audio-track": HTMLAudioTrackElement; } }
 
-customElement("audio-track", HTMLAudioTrackElement);
+CustomElement.define("audio-track", HTMLAudioTrackElement);

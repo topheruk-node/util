@@ -39,8 +39,8 @@ export class CustomElement extends HTMLElement {
     attributeChangedCallback(name: string, prev: string, curr: string) {
         console.log(`${name}: ${prev} -> ${curr}`);
     }
-}
 
-export function customElement<K extends keyof HTMLElementTagNameMap>(name: K, constructor: CustomElementConstructor, options?: ElementDefinitionOptions): void {
-    window.customElements.define(name, constructor, options);
+    static define<K extends keyof HTMLElementTagNameMap>(name: K, constructor: CustomElementConstructor, options?: ElementDefinitionOptions) {
+        window.customElements.define(name, constructor, options);
+    }
 }

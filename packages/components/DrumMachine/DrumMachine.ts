@@ -1,8 +1,10 @@
-import { createEffectNode, createBufferSource, start, CustomElement, customElement } from "core-x";
+import { createEffectNode, createBufferSource, start, CustomElement } from "core-x";
 import { html, isHTMLElement } from "core-x";
 import { HTMLInsertEffectElement } from "./InsertEffect";
 import { HTMLAudioTrackElement } from "./AudioTrack";
 import { DEFAULT_MIN } from "../utils";
+
+declare global { interface HTMLElementTagNameMap { "drum-machine": HTMLDrumMachineElement; } }
 
 const isInsertEffect = isHTMLElement("insert-effect");
 const isAudioTrack = isHTMLElement("audio-track");
@@ -114,6 +116,5 @@ const doSomething = (dm: HTMLDrumMachineElement, audioEl: HTMLAudioTrackElement)
     ].map((value) => createEffectNode(fxEl.type, value ?? DEFAULT_MIN));
 };
 
-declare global { interface HTMLElementTagNameMap { "drum-machine": HTMLDrumMachineElement; } }
 
-customElement("drum-machine", HTMLDrumMachineElement);
+CustomElement.define("drum-machine", HTMLDrumMachineElement);
