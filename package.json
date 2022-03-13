@@ -1,0 +1,17 @@
+{
+    "name": "playground",
+    "private": true,
+    "version": "0.0.0",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build",
+        "preview": "vite preview"
+    },
+    "workspaces": [
+        "packages/**",
+        "examples/*"
+    ],
+    "devDependencies": {
+        "vite": "^2.8.4"
+    }
+}
