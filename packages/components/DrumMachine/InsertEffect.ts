@@ -1,4 +1,4 @@
-import { CustomElement, dispatchCustomEvent, findEventTargets, html } from "core-x";
+import { HTMLCustomElement, dispatchCustomEvent, findEventTargets, html } from "core-x";
 import { DEFAULT_MAX, DEFAULT_MIN } from "../utils";
 
 declare global { interface HTMLElementTagNameMap { "insert-effect": HTMLInsertEffectElement; } }
@@ -7,7 +7,7 @@ type EffectTyp = "gain" | "highpass" | "lowpass" | "pan";
 
 const customEvent = dispatchCustomEvent();
 
-export class HTMLInsertEffectElement extends CustomElement {
+export class HTMLInsertEffectElement extends HTMLCustomElement {
     static get observedAttributes() {
         return ["type", "value", "min", "max", "for", "step"] as const;
     }
@@ -102,4 +102,4 @@ export class HTMLInsertEffectElement extends CustomElement {
     }
 }
 
-CustomElement.define("insert-effect", HTMLInsertEffectElement);
+HTMLCustomElement.define("insert-effect", HTMLInsertEffectElement);

@@ -3,7 +3,7 @@ import { html } from "./html";
 
 function logger() { console.log("hi"); }
 
-export class CustomElement extends HTMLElement {
+export class HTMLCustomElement extends HTMLElement {
     /**
      * TODO: a more type-safe version of this 
      * is have a signature that dynamically updates

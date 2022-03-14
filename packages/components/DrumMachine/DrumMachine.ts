@@ -1,4 +1,4 @@
-import { createEffectNode, createBufferSource, start, CustomElement } from "core-x";
+import { createEffectNode, createBufferSource, start, HTMLCustomElement } from "core-x";
 import { html, isHTMLElement } from "core-x";
 import { HTMLInsertEffectElement } from "./InsertEffect";
 import { HTMLAudioTrackElement } from "./AudioTrack";
@@ -13,7 +13,7 @@ const isAudioTrack = isHTMLElement("audio-track");
  * I have a audio-track that is rendered before the insert-effect
  * this is causing a bug with my renderChild method
  */
-export class HTMLDrumMachineElement extends CustomElement {
+export class HTMLDrumMachineElement extends HTMLCustomElement {
     static get observedAttributes() {
         return ["mono"] as const;
     }
@@ -121,4 +121,4 @@ const doSomething = (dm: HTMLDrumMachineElement, audioEl: HTMLAudioTrackElement)
 };
 
 
-CustomElement.define("drum-machine", HTMLDrumMachineElement);
+HTMLCustomElement.define("drum-machine", HTMLDrumMachineElement);

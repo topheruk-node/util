@@ -1,4 +1,4 @@
-import { CustomElement, dispatchCustomEvent, html } from "core-x";
+import { HTMLCustomElement, dispatchCustomEvent, html } from "core-x";
 
 declare global { interface HTMLElementTagNameMap { "audio-track": HTMLAudioTrackElement; } }
 
@@ -7,9 +7,9 @@ const customEvent = dispatchCustomEvent();
 // TODO: right click on track should return the unprocessed sound.
 // bypassing the bus and straight to the ctx.
 // this would not effect the insert values 
-export class HTMLAudioTrackElement extends CustomElement {
+export class HTMLAudioTrackElement extends HTMLCustomElement {
     static get observedAttributes() {
-        return ["src", "name", "type"]as const;
+        return ["src", "name", "type"] as const;
     }
 
     fxs = new Map<string, number>();
@@ -62,4 +62,4 @@ export class HTMLAudioTrackElement extends CustomElement {
 }
 
 
-CustomElement.define("audio-track", HTMLAudioTrackElement);
+HTMLCustomElement.define("audio-track", HTMLAudioTrackElement);
