@@ -4,15 +4,6 @@ import { html } from "./html";
 function logger() { console.log("hi"); }
 
 export class HTMLCustomElement extends HTMLElement {
-    /**
-     * TODO: a more type-safe version of this 
-     * is have a signature that dynamically updates
-     * depending on the contents of the array
-     * 
-     * ```{ts}
-     * observedAttributes(): readonly ["value", "min", "max"] { return ["value", "min", "max"]; }
-     * ``` 
-     */
     static get observedAttributes(): readonly string[] { return [] as const; }
 
     render(): Node {
@@ -25,6 +16,11 @@ export class HTMLCustomElement extends HTMLElement {
             .append(this.render());
     }
 
+    /**
+     * TODO: I do like this function, but hate its name.
+     * I will need to see if I can better describe what
+     * this does, else this the best name I can think of.
+     */
     updateChildProperty<K extends keyof HTMLElementTagNameMap>(selectors: K, callback: Consumer<HTMLElementTagNameMap[K]>): this;
     updateChildProperty<T extends Element = Element>(selectors: string, callback: Consumer<T>): this {
         const qs = (this.shadowRoot ?? this).querySelector(selectors);
