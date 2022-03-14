@@ -8,7 +8,7 @@ export class XCounter extends CustomElement {
     render() { return html`<button>hello</button>`; };
 
     static get observedAttributes() {
-        return ["value"];
+        return ["value", "name"] as const;
     }
 
     connectedCallback(): void {

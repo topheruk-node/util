@@ -9,7 +9,7 @@ const customEvent = dispatchCustomEvent();
 // this would not effect the insert values 
 export class HTMLAudioTrackElement extends CustomElement {
     static get observedAttributes() {
-        return ["src", "name", "type"];
+        return ["src", "name", "type"]as const;
     }
 
     fxs = new Map<string, number>();

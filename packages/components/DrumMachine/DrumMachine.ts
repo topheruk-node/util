@@ -14,6 +14,10 @@ const isAudioTrack = isHTMLElement("audio-track");
  * this is causing a bug with my renderChild method
  */
 export class HTMLDrumMachineElement extends CustomElement {
+    static get observedAttributes() {
+        return ["mono"] as const;
+    }
+
     fxs = new Array<HTMLInsertEffectElement>();
 
     busTrack = document.createElement("audio-track");

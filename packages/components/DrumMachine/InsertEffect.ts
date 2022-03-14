@@ -9,7 +9,7 @@ const customEvent = dispatchCustomEvent();
 
 export class HTMLInsertEffectElement extends CustomElement {
     static get observedAttributes() {
-        return ["type", "value", "min", "max", "for", "step"];
+        return ["type", "value", "min", "max", "for", "step"] as const;
     }
 
     get htmlFor(): string { return this.getAttribute("for") ?? "bus"; }

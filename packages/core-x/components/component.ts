@@ -13,7 +13,7 @@ export class CustomElement extends HTMLElement {
      * observedAttributes(): readonly ["value", "min", "max"] { return ["value", "min", "max"]; }
      * ``` 
      */
-    static get observedAttributes(): string[] { return []; }
+    static get observedAttributes(): readonly string[] { return [] as const; }
 
     render(): Node {
         return html`<p>todo</p>`;
