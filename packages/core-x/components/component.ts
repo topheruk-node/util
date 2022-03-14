@@ -25,8 +25,8 @@ export class HTMLCustomElement extends HTMLElement {
             .append(this.render());
     }
 
-    updateProperty<K extends keyof HTMLElementTagNameMap>(selectors: K, callback: Consumer<HTMLElementTagNameMap[K]>): this;
-    updateProperty<T extends Element = Element>(selectors: string, callback: Consumer<T>): this {
+    updateChildProperty<K extends keyof HTMLElementTagNameMap>(selectors: K, callback: Consumer<HTMLElementTagNameMap[K]>): this;
+    updateChildProperty<T extends Element = Element>(selectors: string, callback: Consumer<T>): this {
         const qs = (this.shadowRoot ?? this).querySelector(selectors);
         qs && callback(qs as T);
         return this;

@@ -49,7 +49,7 @@ export class HTMLAudioTrackElement extends HTMLCustomElement {
     attributeChangedCallback(name: string, _: string, curr: string) {
         switch (name) {
             case HTMLAudioTrackElement.observedAttributes[1]:
-                this.updateProperty("button", el => el.innerText = curr);
+                this.updateChildProperty("button", el => el.innerText = curr);
                 return;
         }
     }

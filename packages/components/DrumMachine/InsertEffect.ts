@@ -70,21 +70,21 @@ export class HTMLInsertEffectElement extends HTMLCustomElement {
     attributeChangedCallback(a: string, _: string, q: string) {
         switch (a) {
             case HTMLInsertEffectElement.observedAttributes[0]:
-                this.updateProperty("label", el => el.innerText = q);
+                this.updateChildProperty("label", el => el.innerText = q);
                 return;
             case HTMLInsertEffectElement.observedAttributes[1]:
                 this
-                    .updateProperty("input", el => el.value = q)
-                    .updateProperty("output", el => el.innerText = q);
+                    .updateChildProperty("input", el => el.value = q)
+                    .updateChildProperty("output", el => el.innerText = q);
                 return;
             case HTMLInsertEffectElement.observedAttributes[2]:
-                this.updateProperty("input", el => el.min = q);
+                this.updateChildProperty("input", el => el.min = q);
                 return;
             case HTMLInsertEffectElement.observedAttributes[3]:
-                this.updateProperty("input", el => el.max = q);
+                this.updateChildProperty("input", el => el.max = q);
                 return;
             case HTMLInsertEffectElement.observedAttributes[5]:
-                this.updateProperty("input", el => el.step = q);
+                this.updateChildProperty("input", el => el.step = q);
                 return;
         }
     }
