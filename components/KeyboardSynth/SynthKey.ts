@@ -1,4 +1,4 @@
-import { dispatchCustomEvent, html, createOscillator } from "core-x";
+import { dispatchCustomEvent, html, createOscillator } from "core";
 import { PointerTyp } from "../utils";
 
 const customEvent = dispatchCustomEvent();
