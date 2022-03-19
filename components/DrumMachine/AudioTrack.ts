@@ -1,4 +1,4 @@
-import { HTMLCustomElement, dispatchCustomEvent, html } from "core-x";
+import { HTMLCustomElement, dispatchCustomEvent, html } from "core";
 
 declare global { interface HTMLElementTagNameMap { "audio-track": HTMLAudioTrackElement; } }
 

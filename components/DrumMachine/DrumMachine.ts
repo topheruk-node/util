@@ -1,5 +1,5 @@
-import { createEffectNode, createBufferSource, start, HTMLCustomElement } from "core-x";
-import { html, isHTMLElement } from "core-x";
+import { createEffectNode, createBufferSource, start, HTMLCustomElement } from "core";
+import { html, isHTMLElement } from "core";
 import { HTMLInsertEffectElement } from "./InsertEffect";
 import { HTMLAudioTrackElement } from "./AudioTrack";
 import { DEFAULT_MIN } from "../utils";

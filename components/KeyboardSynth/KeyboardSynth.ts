@@ -1,4 +1,4 @@
-import { html, start, stop } from "core-x";
+import { html, start, stop } from "core";
 import { PointerTyp } from "../utils";
 
 export default class KeyboardSynth extends HTMLElement {

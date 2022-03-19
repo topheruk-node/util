@@ -1,4 +1,4 @@
-import { HTMLCustomElement, dispatchCustomEvent, findEventTargets, html } from "core-x";
+import { HTMLCustomElement, dispatchCustomEvent, findEventTargets, html } from "core";
 import { DEFAULT_MAX, DEFAULT_MIN } from "../utils";
 
 declare global { interface HTMLElementTagNameMap { "insert-effect": HTMLInsertEffectElement; } }

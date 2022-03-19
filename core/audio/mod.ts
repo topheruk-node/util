@@ -1,4 +1,4 @@
-import { BiConsumer, BiTransform, Transform, TransformAsync } from "../functional/mod";
+import { BiTransform, Transform } from "../functional/mod";
 
 
 const ctx = new AudioContext();
@@ -12,7 +12,7 @@ type CreateBuffer = Transform<string, Promise<AudioBufferSourceNode>>;
 
 export const createOscillator = () => {
     const osc = ctx.createOscillator();
-    let params = new AudioParam();
+    // let params = new AudioParam();
     osc.onended = () => {
         console.log("ended");
     };
