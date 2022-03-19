@@ -6,8 +6,5 @@
     "private": true,
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "devDependencies": {
-        "core": "^1.0.0"
     }
 }

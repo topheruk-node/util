@@ -8,8 +8,8 @@
         "preview": "vite preview"
     },
     "workspaces": [
-        "packages/**",
-        "examples/*"
+        "core",
+        "components"
     ],
     "devDependencies": {
         "vite": "^2.8.4"
