@@ -1,5 +1,5 @@
 {
-    "name": "lib",
+    "name": "util",
     "private": true,
     "version": "0.0.0",
     "scripts": {
