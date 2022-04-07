@@ -36,11 +36,6 @@ export class HTMLCustomElement extends HTMLElement {
         console.log(`${name}: ${prev} -> ${curr}`);
     }
 
-    // static define<K extends keyof HTMLElementTagNameMap>(name: K, constructor: CustomElementConstructor, options?: ElementDefinitionOptions) {
-    //     window.customElements.define(name, constructor, options);
-    // }
-
-    // 
     static define<K extends keyof HTMLElementTagNameMap>(name: K, options?: ElementDefinitionOptions) {
         window.customElements.define(name, this, options);
     }
