@@ -3,16 +3,20 @@ import { dispatchCustomEvent, findEventTargets } from "core";
 
 type EffectTyp = "gain" | "highpass" | "lowpass" | "pan";
 
-const template = html<FASTElementInsertEffect>`
-    <input 
-        :value="${x => x.value}"
-        min="${x => x.min}"
-        max="${x => x.max}"
-        step="${x => x.step}"
-        @input="${(x, { event }) => x.onInput(event)}"
-        @pointerup="${x => x.onPointerUp()}"
-    type="range">
-    <label>${x => x.value}</label>
+const template = html<FASTInsertEffectElement>`
+    <template
+        @pointerup=${x => x.dispatchEvent(customEvent<Pick<FASTInsertEffectElement, "type" | "value">>("fastinsert", x))}
+        @input=${(x, { event }) => x.onInput(event)}
+    >
+        <label>${x => x.type}</label>
+        <input 
+            :value="${x => x.value}"
+            min="${x => x.min}"
+            max="${x => x.max}"
+            step="${x => x.step}"
+        type="range">
+        <output>${x => x.value}</output>
+    </template>
 `;
 
 const numberConverter: ValueConverter = {
@@ -34,51 +38,28 @@ const effectTypConverter: ValueConverter = {
 const customEvent = dispatchCustomEvent();
 
 @customElement({ name: "fast-insert-effect", template })
-export class FASTElementInsertEffect extends FASTElement {
-    @attr
-    for = "";
+export class FASTInsertEffectElement extends FASTElement {
+    @attr for = "";
 
-    @attr({ converter: effectTypConverter })
-    type: EffectTyp = "gain";
+    @attr({ converter: effectTypConverter }) type: EffectTyp = "gain";
 
-    @attr({ converter: numberConverter })
-    value = 1;
+    @attr({ converter: numberConverter }) value = 1;
 
-    @attr({ converter: numberConverter })
-    min = 0;
+    @attr({ converter: numberConverter }) min = 0;
 
-    @attr({ converter: numberConverter })
-    max = 1;
+    @attr({ converter: numberConverter }) max = 1;
 
-    @attr({ converter: numberConverter })
-    step = 0.01;
+    @attr({ converter: numberConverter }) step = 0.01;
 
     onInput(e: Event) {
         let [input] = findEventTargets(e, "input");
         input && (this.value = input.valueAsNumber);
-    }
-
-    onPointerUp() {
-        this.dispatchEvent(
-            customEvent<RenderEffect>("rendereffect", { fxEl: this })
-        );
     };
+}
 
-    // onpointerdown: ((this: GlobalEventHandlers, ev: PointerEvent) => any) | null;
 
-
-    /** @FIXME UI of range input element needs this to work  */
-    set forceUI(value: number) {
-        this.value = value;
-        /** @FIXME this is ugly & I hate it!! */
-        let input = this.shadowRoot?.querySelector("input")!;
-        input.value = this.value.toString();
-    }
-
-    connectedCallback(): void {
-        super.connectedCallback();
-        this.dispatchEvent(
-            customEvent<RenderChild>("renderchild", { el: this })
-        );
+declare global {
+    interface HTMLElementTagNameMap {
+        "fast-insert-effect": FASTInsertEffectElement;
     }
 }

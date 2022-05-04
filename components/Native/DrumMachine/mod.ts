@@ -1,3 +1,3 @@
-export * from "./DrumMachine";
-export * from "./InsertEffect";
-export * from "./AudioTrack";
+export * from "./drum-machine";
+export * from "./insert-effect";
+export * from "./audio-track";

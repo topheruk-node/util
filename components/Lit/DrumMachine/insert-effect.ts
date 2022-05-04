@@ -9,23 +9,17 @@ const customEvent = dispatchCustomEvent();
 @customElement("lit-insert-effect")
 export class LitElementInsertEffect extends LitElement {
     /** @TODO default value = "gain" else EffectTyp */
-    @property()
-    type: EffectTyp = "gain";
+    @property() type: EffectTyp = "gain";
 
-    @property()
-    for = "";
+    @property() for = "kick";
 
-    @property({ type: Number })
-    value = 1;
+    @property({ type: Number }) value = 1;
 
-    @property({ type: Number })
-    min = 0;
+    @property({ type: Number }) min = 0;
 
-    @property({ type: Number })
-    max = 1;
+    @property({ type: Number }) max = 1;
 
-    @property({ type: Number })
-    step = 0.01;
+    @property({ type: Number }) step = 0.01;
 
     render() {
         return html`
@@ -36,6 +30,7 @@ export class LitElementInsertEffect extends LitElement {
                 .min=${this.min}
                 .step=${this.step}
             type=range>
+            <output>${this.value}</output>
         `;
     }
 
@@ -45,11 +40,11 @@ export class LitElementInsertEffect extends LitElement {
     };
 
     // logger decorator would be good to add
-    onpointerup = () => console.log(this.dispatchEvent(
+    onpointerup = () => this.dispatchEvent(
         customEvent<
             Pick<LitElementInsertEffect, "type" | "value">
         >("litinsert", this)
-    ));
+    );
 
     connectedCallback(): void {
         super.connectedCallback();

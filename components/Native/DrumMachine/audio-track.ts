@@ -55,7 +55,9 @@ export class HTMLAudioTrackElement extends HTMLCustomElement {
 
     #pointerDown() {
         this.dispatchEvent(
-            customEvent<RenderTrack>("rendertrack", { audioEl: this })
+            customEvent<
+                Pick<HTMLAudioTrackElement, "src" | "name">
+            >("htmltrack", this)
         );
     }
 }

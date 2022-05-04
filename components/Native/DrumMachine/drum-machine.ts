@@ -1,9 +1,9 @@
 import { createEffectNode, createBufferSource, start, HTMLCustomElement, BiConsumer, BiTransform, Transform } from "core";
 import { html, isHTMLElement } from "core";
-import { HTMLInsertEffectElement } from "./InsertEffect";
-import { HTMLAudioTrackElement } from "./AudioTrack";
+import { HTMLElementInsertEffect } from "./insert-effect";
+import { HTMLAudioTrackElement } from "./audio-track";
 
-type GetSliceOf<T> = BiTransform<HTMLDrumMachineElement, HTMLAudioTrackElement, Transform<HTMLInsertEffectElement, T[]>>;
+type GetSliceOf<T> = BiTransform<HTMLDrumMachineElement, HTMLAudioTrackElement, Transform<HTMLElementInsertEffect, T[]>>;
 type ChildAdded<T> = BiConsumer<HTMLDrumMachineElement, T>;
 
 
@@ -19,7 +19,7 @@ export class HTMLDrumMachineElement extends HTMLCustomElement {
         return ["mono"] as const;
     }
 
-    fxs = new Array<HTMLInsertEffectElement>();
+    fxs = new Array<HTMLElementInsertEffect>();
 
     busTrack = document.createElement("audio-track");
     curTrack = document.createElement("audio-track");
@@ -59,9 +59,9 @@ export class HTMLDrumMachineElement extends HTMLCustomElement {
 
     // TODO: learn about `MutationObserver1` object 
     connectedCallback() {
-        this.addEventListener("renderchild", this.#renderChild);
-        this.addEventListener("rendereffect", this.#renderEffect);
-        this.addEventListener("rendertrack", this.#renderAudio);
+        this.addEventListener("htmlloaded", this.#renderChild);
+        this.addEventListener("htmlinsert", this.#renderEffect);
+        this.addEventListener("htmltrack", this.#renderAudio);
         // prepend the bus element last?
     }
 
@@ -84,7 +84,7 @@ export class HTMLDrumMachineElement extends HTMLCustomElement {
     }
 }
 
-const fxElAdded: ChildAdded<HTMLInsertEffectElement> = (dm, ie) => {
+const fxElAdded: ChildAdded<HTMLElementInsertEffect> = (dm, ie) => {
     dm.fxs.push(ie);
 };
 

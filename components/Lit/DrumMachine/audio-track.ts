@@ -6,11 +6,9 @@ const customEvent = dispatchCustomEvent();
 
 @customElement("lit-audio-track")
 export class LitElementAudioTrack extends LitElement {
-    @property()
-    name = "track";
+    @property() name = "track";
 
-    @property()
-    src = "";
+    @property() src = "";
 
     fxs = new Map<string, number>();
 

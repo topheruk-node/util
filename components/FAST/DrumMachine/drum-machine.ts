@@ -1,83 +1,76 @@
-import { FASTElement, customElement, html } from '@microsoft/fast-element';
-import { FASTElementAudioTrack } from './audio-track';
-import { FASTElementInsertEffect } from './insert-effect';
-import { isHTMLElement, createBufferSource, createEffectNode, start } from "core";
+import { FASTElement, customElement, html, slotted, observable, elements } from '@microsoft/fast-element';
+import { FASTAudioTrackElement } from './audio-track';
+import { FASTInsertEffectElement } from './insert-effect';
+import { createBufferSource, createEffectNode, start, timer } from "core";
 
 /** @TODO currentButton name needs to be visible for accessibilty reasons */
-const template = html<FASTElementDrumMachine>`
-    <slot name="insert"></slot>
-    <slot name="track"></slot>
+const template = html<FASTDrumMachineElement>`
+    <template 
+        @fasttrack=${(x, { event }) => x.playbackAudio(event)}
+        @fastinsert=${(x, { event }) => x.cacheInsertValue(event)}
+    >
+        <slot name="insert" ${slotted({ property: "listOfInsert", filter: elements() })}></slot>
+        <slot name="track" ${slotted({ property: "listOfTrack", filter: elements() })}></slot>
+    </template>
 `;
 
-const isAudioTrack = isHTMLElement("fast-audio-track");
-const isInsertEffect = isHTMLElement("fast-insert-effect");
 
 @customElement({ name: "fast-drum-machine", template })
-export class FASTElementDrumMachine extends FASTElement {
-
-    fxs = new Array<FASTElementInsertEffect>();
-
+export class FASTDrumMachineElement extends FASTElement {
+    /** @TODO next agenda is to potentially remove this but it seems to work fine anyway */
     currentAudioTrack = document.createElement("fast-audio-track");
 
-    connectedCallback(): void {
-        super.connectedCallback();
+    @observable listOfInsert!: FASTInsertEffectElement[];
+    listOfInsertChanged(_prev: FASTInsertEffectElement[], _next: FASTInsertEffectElement[]) { }
 
-        this.addEventListener("renderchild", this.#onRenderChild);
-        this.addEventListener("rendereffect", this.#onRenderInsert);
-        this.addEventListener("rendertrack", this.#onRenderTrack);
-    }
-
-    #onRenderChild({ target }: CustomEvent<RenderChild>) {
-        if (isAudioTrack(target)) {
-            this.currentAudioTrack = target;
-            for (const fx of this.fxs) {
-                fx.for = target.name;
-                target.fxs.set(fx.type, fx.value);
+    @observable listOfTrack!: FASTAudioTrackElement[];
+    listOfTrackChanged(_prev: FASTAudioTrackElement[], next: FASTAudioTrackElement[]) {
+        // console.log(!prev?.at(-1)) <- prev === undefined or never[];
+        for (const track of next) {
+            this.currentAudioTrack = track;
+            for (const insert of this.listOfInsert) {
+                insert.for = track.name;
+                track.fxs.set(insert.type, insert.value);
             };
-        } else if (isInsertEffect(target)) {
-            this.fxs.push(target);
-        }
+        }//O(n^2)
     }
 
-    #onRenderInsert({ detail: { fxEl } }: CustomEvent<RenderEffect>) {
-        this.currentAudioTrack.fxs.set(fxEl.type, fxEl.value);
-    }
+    cacheInsertValue(e: Event, { detail: { type, value } } = e as CustomEvent<
+        Pick<FASTInsertEffectElement, "type" | "value">
+    >) {
+        this.currentAudioTrack.fxs.set(type, value);
+    };
 
-    async #onRenderTrack({ detail: { audioEl } }: CustomEvent<RenderTrack>) {
-        let fxs = this.#fetchEffectNodes(audioEl);
-        if (audioEl.src === "") return;
-        const audio = await createBufferSource(audioEl.src);
-        start(audio, ...fxs);
-    }
+    async playbackAudio(e: Event, { detail: { src, fxs, name }, target } = e as CustomEvent<
+        Pick<FASTAudioTrackElement, "src" | "fxs" | "name">
+    >) {
+        let nodes = this.#fetchEffectNodeList({ fxs, name, audioTrack: target as FASTAudioTrackElement });
+        if (src === "") return;
+        const audio = await createBufferSource(src);
+        start(audio, ...nodes);
+    };
 
-    #fetchEffectNodes(audioTrack: FASTElementAudioTrack): AudioNode[] {
+    #fetchEffectNodeList({ fxs, name, audioTrack }:
+        Pick<FASTAudioTrackElement, "fxs" | "name"> & { audioTrack: FASTAudioTrackElement; }
+    ): AudioNode[] {
         let [start, end] = timer("loop");
-        return this.fxs.flatMap((fx) => {
+        return this.listOfInsert.flatMap(insert => {
             start();
-            if (fx.for === audioTrack.name) {
-                audioTrack.fxs.set(fx.type, fx.value);
-            } else if (fx.for !== audioTrack.name) {
+            if (insert.for === name) {
+                fxs.set(insert.type, insert.value);
+            } else if (insert.for !== name) {
                 this.currentAudioTrack = audioTrack;
-                fx.for = audioTrack.name;
-                fx.value = audioTrack.fxs.get(fx.type) ?? 0;
+                insert.for = audioTrack.name;
+                insert.value = audioTrack.fxs.get(insert.type) ?? 0;
             }
             end();
-            return [this.currentAudioTrack.fxs.get(fx.type)].map(v => createEffectNode(fx.type, v ?? 0));
+            return [this.currentAudioTrack.fxs.get(insert.type)].map(v => createEffectNode(insert.type, v ?? 0));
         });
-    };
+    }
 }
 
-const timer = (label: string) => {
-    return [
-        () => console.time(label),
-        () => console.timeEnd(label)
-    ];
-};
-
-
-
-
-
-// srcElement -- @depreciated
-// target
-// currentTarget
+declare global {
+    interface HTMLElementTagNameMap {
+        "fast-drum-machine": FASTDrumMachineElement;
+    }
+}

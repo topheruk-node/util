@@ -6,7 +6,7 @@ type EffectTyp = "gain" | "highpass" | "lowpass" | "pan";
 
 const customEvent = dispatchCustomEvent();
 
-export class HTMLInsertEffectElement extends HTMLCustomElement {
+export class HTMLElementInsertEffect extends HTMLCustomElement {
     static get observedAttributes() {
         return ["type", "value", "min", "max", "for", "step"] as const;
     }
@@ -60,7 +60,7 @@ export class HTMLInsertEffectElement extends HTMLCustomElement {
     }
 
     connectedCallback() {
-        this.dispatchEvent(customEvent<RenderChild>("renderchild", { el: this }));
+        this.dispatchEvent(customEvent("htmlloaded", null));
 
         this.addEventListener("input", this.#inputChange);
         this.addEventListener("pointerup", this.#pointerUp);
@@ -68,21 +68,21 @@ export class HTMLInsertEffectElement extends HTMLCustomElement {
 
     attributeChangedCallback(a: string, _: string, q: string) {
         switch (a) {
-            case HTMLInsertEffectElement.observedAttributes[0]:
+            case HTMLElementInsertEffect.observedAttributes[0]:
                 this.updateChildProperty("label", el => el.innerText = q);
                 return;
-            case HTMLInsertEffectElement.observedAttributes[1]:
+            case HTMLElementInsertEffect.observedAttributes[1]:
                 this
                     .updateChildProperty("input", el => el.value = q)
                     .updateChildProperty("output", el => el.innerText = q);
                 return;
-            case HTMLInsertEffectElement.observedAttributes[2]:
+            case HTMLElementInsertEffect.observedAttributes[2]:
                 this.updateChildProperty("input", el => el.min = q);
                 return;
-            case HTMLInsertEffectElement.observedAttributes[3]:
+            case HTMLElementInsertEffect.observedAttributes[3]:
                 this.updateChildProperty("input", el => el.max = q);
                 return;
-            case HTMLInsertEffectElement.observedAttributes[5]:
+            case HTMLElementInsertEffect.observedAttributes[5]:
                 this.updateChildProperty("input", el => el.step = q);
                 return;
         }
@@ -90,19 +90,20 @@ export class HTMLInsertEffectElement extends HTMLCustomElement {
 
     #inputChange(e: Event) {
         let [input] = findEventTargets(e, "input");
-
         input && (this.valueAsNumber = input.valueAsNumber);
     }
 
     #pointerUp(_: Event) {
         this.dispatchEvent(
-            customEvent<RenderEffect>("rendereffect", { fxEl: this })
+            customEvent<
+                Pick<HTMLElementInsertEffect, "type" | "value">
+            >("htmlinsert", this)
         );
     }
 }
 
 
-customElements.define("insert-effect", HTMLInsertEffectElement);
+customElements.define("insert-effect", HTMLElementInsertEffect);
 
 
-declare global { interface HTMLElementTagNameMap { "insert-effect": HTMLInsertEffectElement; } }
+declare global { interface HTMLElementTagNameMap { "insert-effect": HTMLElementInsertEffect; } }

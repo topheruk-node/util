@@ -62,17 +62,17 @@ export class LitElementDrumMachine extends LitElement {
         Pick<LitElementAudioTrack, "fxs" | "name"> & { audioTrack: LitElementAudioTrack; }
     ): AudioNode[] {
         let [start, end] = timer("loop");
-        return this.listInsert.flatMap(fx => {
+        return this.listInsert.flatMap(insert => {
             start();
-            if (fx.for === name) {
-                fxs.set(fx.type, fx.value);
-            } else if (fx.for !== name) {
+            if (insert.for === name) {
+                fxs.set(insert.type, insert.value);
+            } else if (insert.for !== name) {
                 this.currentAudioTrack = audioTrack;
-                fx.for = audioTrack.name;
-                fx.value = audioTrack.fxs.get(fx.type) ?? 0;
+                insert.for = audioTrack.name;
+                insert.value = audioTrack.fxs.get(insert.type) ?? 0;
             }
             end();
-            return [this.currentAudioTrack.fxs.get(fx.type)].map(v => createEffectNode(fx.type, v ?? 0));
+            return [this.currentAudioTrack.fxs.get(insert.type)].map(v => createEffectNode(insert.type, v ?? 0));
         });
     }
 }
