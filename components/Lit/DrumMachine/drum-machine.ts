@@ -1,52 +1,44 @@
-import { createBufferSource, createEffectNode, isHTMLElement, start, timer } from 'core';
-import { LitElement, html, css } from 'lit';
-import { customElement, property, queryAssignedElements } from 'lit/decorators.js';
+import { createBufferSource, createEffectNode, start, timer } from 'core';
+import { LitElement, html } from 'lit';
+import { customElement, queryAssignedElements } from 'lit/decorators.js';
 import { LitEAudioTrackElement } from './audio-track';
 import { LitInsertEffectElement } from './insert-effect';
 
-declare global {
-    interface HTMLElementTagNameMap {
-        "lit-audio-track": LitEAudioTrackElement;
-        "lit-insert-effect": LitInsertEffectElement;
-    }
-}
-
-const isAudioTrack = isHTMLElement("lit-audio-track");
-const isInsertEffect = isHTMLElement("lit-insert-effect");
-
 @customElement("lit-drum-machine")
 export class LitDrumMachineElement extends LitElement {
-    listInsert: Array<LitInsertEffectElement> = [];
+    // listInsert: Array<LitInsertEffectElement> = [];
     currentAudioTrack = document.createElement("lit-audio-track");
+
+    @queryAssignedElements({ slot: "insert" })
+    listOfInsert!: LitInsertEffectElement[];
+
+    @queryAssignedElements({ slot: "track" })
+    listOfTrack!: LitEAudioTrackElement[];
 
     render() {
         return html`
             <slot 
                 name=insert
+                @slotchange=${() => console.log(this.listOfInsert)}
                 @litinsert=${this.cacheInsertValue}
             ></slot>
             <slot 
                 name=track
+                @slotchange=${this.listOfTrackChange}
                 @littrack=${this.playbackAudio}
             ></slot>
         `;
     }
 
-    connectedCallback(): void {
-        super.connectedCallback();
-
-        /** @TODO try using the `queryAssignedElements` API */
-        this.addEventListener("litloaded", ({ target }) => {
-            if (isAudioTrack(target)) {
-                this.currentAudioTrack = target;
-                for (const insert of this.listInsert) {
-                    insert.for = target.name;
-                    target.fxs.set(insert.type, insert.value);
-                };
-            } else if (isInsertEffect(target)) {
-                this.listInsert.push(target);
-            }
-        });
+    listOfTrackChange() {
+        // only do this initially, every other time no need to loop through every track
+        for (const track of this.listOfTrack) {
+            this.currentAudioTrack = track;
+            for (const insert of this.listOfInsert) {
+                insert.for = track.name;
+                track.fxs.set(insert.type, insert.value);
+            };
+        }//O(n^2)
     }
 
     cacheInsertValue(e: Event, { detail: { type, value } } = e as LitInsertEvent) {
@@ -64,7 +56,7 @@ export class LitDrumMachineElement extends LitElement {
         Pick<LitEAudioTrackElement, "fxs" | "name"> & { audioTrack: LitEAudioTrackElement; }
     ): AudioNode[] {
         let [start, end] = timer("lit-loop");
-        return this.listInsert.flatMap(insert => {
+        return this.listOfInsert.flatMap(insert => {
             start();
             if (insert.for === name) {
                 fxs.set(insert.type, insert.value);
