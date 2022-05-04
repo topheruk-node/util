@@ -1,11 +1,12 @@
 import { FASTElement, customElement, html, attr, ValueConverter } from '@microsoft/fast-element';
-import { dispatchCustomEvent, findEventTargets } from "core";
+import { findEventTargets } from "core";
 
+// move
 type EffectTyp = "gain" | "highpass" | "lowpass" | "pan";
 
 const template = html<FASTInsertEffectElement>`
     <template
-        @pointerup=${x => x.dispatchEvent(customEvent<Pick<FASTInsertEffectElement, "type" | "value">>("fastinsert", x))}
+        @pointerup=${x => x.$emit("fastinsert", x)}
         @input=${(x, { event }) => x.onInput(event)}
     >
         <label>${x => x.type}</label>
@@ -35,8 +36,6 @@ const effectTypConverter: ValueConverter = {
     }
 };
 
-const customEvent = dispatchCustomEvent();
-
 @customElement({ name: "fast-insert-effect", template })
 export class FASTInsertEffectElement extends FASTElement {
     @attr for = "";
@@ -62,4 +61,10 @@ declare global {
     interface HTMLElementTagNameMap {
         "fast-insert-effect": FASTInsertEffectElement;
     }
+
+    interface HTMLElementEventMap {
+        "fastinsert": FastInsertEvent;
+    }
+
+    type FastInsertEvent = CustomEvent<Pick<FASTInsertEffectElement, "type" | "value">>;
 }

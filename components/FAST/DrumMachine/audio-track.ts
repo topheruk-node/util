@@ -1,15 +1,14 @@
 import { FASTElement, customElement, html, attr } from '@microsoft/fast-element';
-import { dispatchCustomEvent } from "core";
 
+// Using `$emit` does not really matter as type saftey would likely only matter in a `declare global` block
 const template = html<FASTAudioTrackElement>`
     <template
-        @pointerdown=${x => x.dispatchEvent(customEvent<Pick<FASTAudioTrackElement, "src" | "fxs">>("fasttrack", x))}
+        @pointerdown=${x => x.$emit("fasttrack", x)}
     >
         <button>${x => x.name}</button>
     </template>
 `;
 
-const customEvent = dispatchCustomEvent();
 
 @customElement({ name: "fast-audio-track", template })
 export class FASTAudioTrackElement extends FASTElement {
@@ -24,4 +23,10 @@ declare global {
     interface HTMLElementTagNameMap {
         "fast-audio-track": FASTAudioTrackElement;
     }
+
+    interface HTMLElementEventMap {
+        "fasttrack": FastTrackEvent;
+    }
+
+    type FastTrackEvent = CustomEvent<Pick<FASTAudioTrackElement, "src" | "fxs" | "name">>;
 }

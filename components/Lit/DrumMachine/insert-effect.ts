@@ -1,13 +1,12 @@
-import { dispatchCustomEvent, findEventTargets } from 'core';
-import { LitElement, html, css } from 'lit';
+import { EffectTyp, findEventTargets, dispatchCustomEvent } from 'core';
+import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-type EffectTyp = "gain" | "highpass" | "lowpass" | "pan";
 
-const customEvent = dispatchCustomEvent();
+const _customEvent = dispatchCustomEvent();
 
 @customElement("lit-insert-effect")
-export class LitElementInsertEffect extends LitElement {
+export class LitInsertEffectElement extends LitElement {
     /** @TODO default value = "gain" else EffectTyp */
     @property() type: EffectTyp = "gain";
 
@@ -29,28 +28,36 @@ export class LitElementInsertEffect extends LitElement {
                 .max=${this.max}
                 .min=${this.min}
                 .step=${this.step}
+                @input=${this.valueChange}
+                @pointerup=${() => this.dispatchEvent(_customEvent<LitInsertEvent>("litinsert", { detail: this }))}
             type=range>
             <output>${this.value}</output>
         `;
     }
 
-    oninput = (e: Event) => {
+
+    valueChange(e: Event) {
         let [input] = findEventTargets(e, "input");
         input && (this.value = input.valueAsNumber);
     };
-
-    // logger decorator would be good to add
-    onpointerup = () => this.dispatchEvent(
-        customEvent<
-            Pick<LitElementInsertEffect, "type" | "value">
-        >("litinsert", this)
-    );
 
     connectedCallback(): void {
         super.connectedCallback();
 
         this.dispatchEvent(
-            customEvent("litloaded", null)
+            _customEvent("litloaded", { detail: null })
         );
     }
+}
+
+declare global {
+    interface HTMLElementTagNameMap {
+        "lit-insert-effect": LitInsertEffectElement;
+    }
+
+    interface HTMLElementEventMap {
+        "litinsert": LitInsertEvent;
+    }
+
+    type LitInsertEvent = CustomEvent<Pick<LitInsertEffectElement, "type" | "value">>;
 }

@@ -1,13 +1,13 @@
-import { createBufferSource, createEffectNode, isHTMLElement, start } from 'core';
+import { createBufferSource, createEffectNode, isHTMLElement, start, timer } from 'core';
 import { LitElement, html, css } from 'lit';
 import { customElement, property, queryAssignedElements } from 'lit/decorators.js';
-import { LitElementAudioTrack } from './audio-track';
-import { LitElementInsertEffect } from './insert-effect';
+import { LitEAudioTrackElement } from './audio-track';
+import { LitInsertEffectElement } from './insert-effect';
 
 declare global {
     interface HTMLElementTagNameMap {
-        "lit-audio-track": LitElementAudioTrack;
-        "lit-insert-effect": LitElementInsertEffect;
+        "lit-audio-track": LitEAudioTrackElement;
+        "lit-insert-effect": LitInsertEffectElement;
     }
 }
 
@@ -15,14 +15,20 @@ const isAudioTrack = isHTMLElement("lit-audio-track");
 const isInsertEffect = isHTMLElement("lit-insert-effect");
 
 @customElement("lit-drum-machine")
-export class LitElementDrumMachine extends LitElement {
-    listInsert: Array<LitElementInsertEffect> = [];
+export class LitDrumMachineElement extends LitElement {
+    listInsert: Array<LitInsertEffectElement> = [];
     currentAudioTrack = document.createElement("lit-audio-track");
 
     render() {
         return html`
-            <slot name=insert></slot>
-            <slot name=track></slot>
+            <slot 
+                name=insert
+                @litinsert=${this.cacheInsertValue}
+            ></slot>
+            <slot 
+                name=track
+                @littrack=${this.playbackAudio}
+            ></slot>
         `;
     }
 
@@ -41,27 +47,23 @@ export class LitElementDrumMachine extends LitElement {
                 this.listInsert.push(target);
             }
         });
+    }
 
-        this.addEventListener("litinsert", (e, { detail: { type, value } } = e as CustomEvent<
-            Pick<LitElementInsertEffect, "type" | "value">
-        >) => {
-            this.currentAudioTrack.fxs.set(type, value);
-        });
+    cacheInsertValue(e: Event, { detail: { type, value } } = e as LitInsertEvent) {
+        this.currentAudioTrack.fxs.set(type, value);
+    };
 
-        this.addEventListener("littrack", async (e, { detail: { src, fxs, name }, target } = e as CustomEvent<
-            Pick<LitElementAudioTrack, "src" | "fxs" | "name">
-        >) => {
-            let nodes = this.#fetchEffectNodeList({ fxs, name, audioTrack: target as LitElementAudioTrack });
-            if (src === "") return;
-            const audio = await createBufferSource(src);
-            start(audio, ...nodes);
-        });
+    async playbackAudio(e: Event, { detail: { src, fxs, name }, target } = e as LitTrackEvent) {
+        let nodes = this.#fetchEffectNodeList({ fxs, name, audioTrack: target as LitEAudioTrackElement });
+        if (src === "") return;
+        const audio = await createBufferSource(src);
+        start(audio, ...nodes);
     }
 
     #fetchEffectNodeList({ fxs, name, audioTrack }:
-        Pick<LitElementAudioTrack, "fxs" | "name"> & { audioTrack: LitElementAudioTrack; }
+        Pick<LitEAudioTrackElement, "fxs" | "name"> & { audioTrack: LitEAudioTrackElement; }
     ): AudioNode[] {
-        let [start, end] = timer("loop");
+        let [start, end] = timer("lit-loop");
         return this.listInsert.flatMap(insert => {
             start();
             if (insert.for === name) {
@@ -77,9 +79,8 @@ export class LitElementDrumMachine extends LitElement {
     }
 }
 
-const timer = (label: string) => {
-    return [
-        () => console.time(label),
-        () => console.timeEnd(label)
-    ];
-};
+declare global {
+    interface HTMLElementTagNameMap {
+        "lit-drum-machine": LitDrumMachineElement;
+    }
+}

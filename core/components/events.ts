@@ -6,11 +6,11 @@ declare global {
 }
 
 // TODO: add type saftey
-type Dispatch = (init?: CustomEventInit) => <T>(type: string, detail: T) => CustomEvent<T>;
 
-export const dispatchCustomEvent: Dispatch = init => {
+export const dispatchCustomEvent = (init?: CustomEventInit) => {
     const [cancelable, bubbles, composed] = [init?.cancelable ?? false, init?.bubbles ?? true, init?.composed ?? true];
-    return (type, detail) => new CustomEvent(type, { detail, cancelable, bubbles, composed });
+    return <T extends CustomEvent>(type: string, { detail }: Pick<T, "detail">) =>
+        new CustomEvent(type, { detail, cancelable, bubbles, composed });
 };
 
 

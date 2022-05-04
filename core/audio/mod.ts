@@ -82,3 +82,6 @@ export const start = (src: AudioScheduledSourceNode, ...fxs: AudioNode[]) => {
 export const stop = (src: AudioScheduledSourceNode, ...fxs: AudioNode[]) => {
     src.stop();
 };
+
+export const effectTyp = ["gain", "pan", "highpass", "lowpass"] as const;
+export type EffectTyp = typeof effectTyp[number];

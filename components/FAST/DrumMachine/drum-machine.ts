@@ -35,25 +35,22 @@ export class FASTDrumMachineElement extends FASTElement {
         }//O(n^2)
     }
 
-    cacheInsertValue(e: Event, { detail: { type, value } } = e as CustomEvent<
-        Pick<FASTInsertEffectElement, "type" | "value">
-    >) {
+    cacheInsertValue(e: Event, { detail: { type, value } } = e as FastInsertEvent) {
         this.currentAudioTrack.fxs.set(type, value);
     };
 
-    async playbackAudio(e: Event, { detail: { src, fxs, name }, target } = e as CustomEvent<
-        Pick<FASTAudioTrackElement, "src" | "fxs" | "name">
-    >) {
+    async playbackAudio(e: Event, { detail: { src, fxs, name }, target } = e as FastTrackEvent) {
         let nodes = this.#fetchEffectNodeList({ fxs, name, audioTrack: target as FASTAudioTrackElement });
         if (src === "") return;
         const audio = await createBufferSource(src);
         start(audio, ...nodes);
     };
 
+    /** @TODO clean-up type */
     #fetchEffectNodeList({ fxs, name, audioTrack }:
         Pick<FASTAudioTrackElement, "fxs" | "name"> & { audioTrack: FASTAudioTrackElement; }
     ): AudioNode[] {
-        let [start, end] = timer("loop");
+        let [start, end] = timer("fast-loop");
         return this.listOfInsert.flatMap(insert => {
             start();
             if (insert.for === name) {
