@@ -1,2 +1,4 @@
 export * from "./global";
-export * from "./DrumMachine/mod";
+export * from "./FAST/mod";
+export * from "./Lit/mod";
+export * from "./Native/mod";

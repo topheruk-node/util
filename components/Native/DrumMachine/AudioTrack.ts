@@ -60,6 +60,6 @@ export class HTMLAudioTrackElement extends HTMLCustomElement {
     }
 }
 
-HTMLCustomElement.define("audio-track");
+customElements.define("audio-track", HTMLAudioTrackElement);
 
 declare global { interface HTMLElementTagNameMap { "audio-track": HTMLAudioTrackElement; } }

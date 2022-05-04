@@ -4,6 +4,8 @@
     "main": "mod.ts",
     "private": true,
     "dependencies": {
-        "core": "^1.0.0"
+        "core": "^1.0.0",
+        "@microsoft/fast-element": "^1.10.1",
+        "lit": "^2.2.3"
     }
 }

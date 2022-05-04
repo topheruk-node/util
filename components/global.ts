@@ -1,6 +1,15 @@
-import { HTMLAudioTrackElement } from "./DrumMachine/AudioTrack";
-import { HTMLInsertEffectElement } from "./DrumMachine/InsertEffect";
+import { FASTElementAudioTrack } from "./FAST/DrumMachine/audio-track";
+import { FASTElementDrumMachine } from "./FAST/DrumMachine/drum-machine";
+import { FASTElementInsertEffect } from "./FAST/DrumMachine/insert-effect";
 import { PointerTyp } from "./utils";
+
+declare global {
+    interface HTMLElementTagNameMap {
+        "fast-audio-track": FASTElementAudioTrack;
+        "fast-insert-effect": FASTElementInsertEffect;
+        "fast-drum-machine": FASTElementDrumMachine;
+    }
+}
 
 declare global {
 
@@ -12,8 +21,8 @@ declare global {
         "renderosc": CustomEvent<RenderOsc>;
     }
 
-    interface RenderEffect { fxEl: HTMLInsertEffectElement; }
-    interface RenderTrack { audioEl: HTMLAudioTrackElement; }
+    interface RenderEffect { fxEl: FASTElementInsertEffect; }
+    interface RenderTrack { audioEl: FASTElementAudioTrack; }
     interface RenderChild { el: HTMLElement; }
     interface RenderOsc { osc: OscillatorNode, pointerTyp: PointerTyp; }
 }

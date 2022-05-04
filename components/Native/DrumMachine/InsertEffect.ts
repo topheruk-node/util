@@ -1,5 +1,5 @@
 import { HTMLCustomElement, dispatchCustomEvent, findEventTargets, html } from "core";
-import { DEFAULT_MAX, DEFAULT_MIN } from "../utils";
+import { DEFAULT_MAX, DEFAULT_MIN } from "../../utils";
 
 
 type EffectTyp = "gain" | "highpass" | "lowpass" | "pan";
@@ -101,6 +101,8 @@ export class HTMLInsertEffectElement extends HTMLCustomElement {
     }
 }
 
-HTMLCustomElement.define("insert-effect");
+
+customElements.define("insert-effect", HTMLInsertEffectElement);
+
 
 declare global { interface HTMLElementTagNameMap { "insert-effect": HTMLInsertEffectElement; } }

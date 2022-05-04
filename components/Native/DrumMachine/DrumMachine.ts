@@ -113,6 +113,7 @@ const fetchEffecNode: GetSliceOf<AudioNode> = (dm, audioEl) => fxEl => {
     ].map(value => createEffectNode(fxEl.type, value ?? 0));
 };
 
-HTMLDrumMachineElement.define("drum-machine");
+customElements.define("drum-machine", HTMLDrumMachineElement);
+
 
 declare global { interface HTMLElementTagNameMap { "drum-machine": HTMLDrumMachineElement; } }
