@@ -3,7 +3,7 @@ import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 
-const _customEvent = dispatchCustomEvent();
+const customEvent = dispatchCustomEvent();
 
 @customElement("lit-insert-effect")
 export class LitInsertEffectElement extends LitElement {
@@ -29,7 +29,7 @@ export class LitInsertEffectElement extends LitElement {
                 .min=${this.min}
                 .step=${this.step}
                 @input=${this.valueChange}
-                @pointerup=${() => this.dispatchEvent(_customEvent<LitInsertEvent>("litinsert", { detail: this }))}
+                @pointerup=${() => this.dispatchEvent(customEvent<LitInsertEvent>("litinsert", { detail: this }))}
             type=range>
             <output>${this.value}</output>
         `;
@@ -40,14 +40,6 @@ export class LitInsertEffectElement extends LitElement {
         let [input] = findEventTargets(e, "input");
         input && (this.value = input.valueAsNumber);
     };
-
-    connectedCallback(): void {
-        super.connectedCallback();
-
-        this.dispatchEvent(
-            _customEvent("litloaded", { detail: null })
-        );
-    }
 }
 
 declare global {

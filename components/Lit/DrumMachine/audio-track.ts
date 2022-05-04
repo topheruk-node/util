@@ -2,8 +2,7 @@ import { dispatchCustomEvent } from 'core';
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-
-const _customEvent = dispatchCustomEvent();
+const customEvent = dispatchCustomEvent();
 
 @customElement("lit-audio-track")
 export class LitEAudioTrackElement extends LitElement {
@@ -16,19 +15,11 @@ export class LitEAudioTrackElement extends LitElement {
     render() {
         return html`
             <button 
-                @pointerdown=${() => this.dispatchEvent(_customEvent<LitTrackEvent>("littrack", { detail: this }))}
+                @pointerdown=${() => this.dispatchEvent(customEvent<LitTrackEvent>("littrack", { detail: this }))}
             >
                 ${this.name}
             </button>
         `;
-    }
-
-    connectedCallback(): void {
-        super.connectedCallback();
-
-        this.dispatchEvent(
-            _customEvent("litloaded", { detail: null })
-        );
     }
 }
 
