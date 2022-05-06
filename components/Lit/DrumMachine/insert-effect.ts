@@ -1,18 +1,23 @@
-import { EffectTyp, findEventTargets, dispatchCustomEvent } from 'core';
+import { dispatchCustomEvent } from 'core';
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { Effect, effectInsertStyles } from './templates-and-styles';
 
 
 const customEvent = dispatchCustomEvent();
 
-@customElement("lit-insert-effect")
+declare global {
+    interface HTMLElementTagNameMap {
+        "lit-effect-insert": LitInsertEffectElement;
+    }
+}
+
+
+@customElement("lit-effect-insert")
 export class LitInsertEffectElement extends LitElement {
-    /** @TODO default value = "gain" else EffectTyp */
-    @property() type: EffectTyp = "gain";
+    @property() type: Effect = "gain";//type Effect = "gain" | "pan" | "highpass" | "lowpass"
 
-    @property() for = "kick";
-
-    @property({ type: Number }) value = 1;
+    @property({ type: Number }) value = 0;
 
     @property({ type: Number }) min = 0;
 
@@ -20,36 +25,33 @@ export class LitInsertEffectElement extends LitElement {
 
     @property({ type: Number }) step = 0.01;
 
+    @property() for = "track";//type string
+
+    #onPointerUp() {
+        this.dispatchEvent(new CustomEvent("cache-value", { detail: this, bubbles: true, composed: true }));
+    };
+
+    #onInput(e: Event) {
+        this.value = (e.target as HTMLInputElement).valueAsNumber;
+    }
+
     render() {
         return html`
-            <label>${this.type}</label>
-            <input 
+            <label style="grid-area: a">${this.type}</label>
+            <input style="grid-area: c"
+                @input=${this.#onInput}
+                @pointerup=${this.#onPointerUp}
                 .value=${this.value}
                 .max=${this.max}
                 .min=${this.min}
                 .step=${this.step}
-                @input=${this.valueChange}
-                @pointerup=${() => this.dispatchEvent(customEvent<LitInsertEvent>("litinsert", { detail: this }))}
-            type=range>
-            <output>${this.value}</output>
+            type="range">
+            <output style="grid-area: b">${this.value}</output>
         `;
     }
 
-
-    valueChange(e: Event) {
-        let [input] = findEventTargets(e, "input");
-        input && (this.value = input.valueAsNumber);
-    };
+    static styles = effectInsertStyles;
 }
 
-declare global {
-    interface HTMLElementTagNameMap {
-        "lit-insert-effect": LitInsertEffectElement;
-    }
 
-    interface HTMLElementEventMap {
-        "litinsert": LitInsertEvent;
-    }
 
-    type LitInsertEvent = CustomEvent<Pick<LitInsertEffectElement, "type" | "value">>;
-}

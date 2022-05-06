@@ -1,37 +1,31 @@
 import { dispatchCustomEvent } from 'core';
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { audioTrackStyles, Effect } from './templates-and-styles';
 
 const customEvent = dispatchCustomEvent();
 
-@customElement("lit-audio-track")
-export class LitEAudioTrackElement extends LitElement {
-    @property() name = "track";
-
-    @property() src = "";
-
-    fxs = new Map<string, number>();
-
-    render() {
-        return html`
-            <button 
-                @pointerdown=${() => this.dispatchEvent(customEvent<LitTrackEvent>("littrack", { detail: this }))}
-            >
-                ${this.name}
-            </button>
-        `;
+declare global {
+    interface HTMLElementTagNameMap {
+        "lit-audio-track": LitAudioTrackElement;
     }
 }
 
+@customElement("lit-audio-track")
+export class LitAudioTrackElement extends LitElement {
+    @property() name = "track";//type string
 
-declare global {
-    interface HTMLElementTagNameMap {
-        "lit-audio-track": LitEAudioTrackElement;
+    @property() src?: string;
+
+    fxs = new Map<Effect, number>();
+
+    #onPointerDown() {
+        this.dispatchEvent(new CustomEvent("play-back", { detail: this, bubbles: true, composed: true }));
     }
 
-    interface HTMLElementEventMap {
-        "littrack": LitTrackEvent;
+    render() {
+        return html`<button @pointerdown=${this.#onPointerDown}>${this.name}</button>`;
     }
 
-    type LitTrackEvent = CustomEvent<Pick<LitEAudioTrackElement, "src" | "fxs" | "name">>;
+    static styles = audioTrackStyles;
 }

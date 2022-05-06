@@ -1,8 +1,5 @@
 import { FASTElement, customElement, html, attr, ValueConverter } from '@microsoft/fast-element';
-import { findEventTargets } from "core";
-
-// move
-type EffectTyp = "gain" | "highpass" | "lowpass" | "pan";
+import { EffectTyp, findEventTargets } from "core";
 
 const template = html<FASTInsertEffectElement>`
     <template
