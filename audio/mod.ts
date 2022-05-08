@@ -19,10 +19,12 @@ export const createOscillator = () => {
     return osc;
 };
 
+
+/** @FIXME seems to behave really slow */
 export const createBufferSource: CreateBuffer = async path => {
-    const audio = ctx.createBufferSource();
     const data = await fetch(path);
     const arrayBuffer = await data.arrayBuffer();
+    const audio = ctx.createBufferSource();
     audio.buffer = await ctx.decodeAudioData(arrayBuffer);
     return audio;
 };
@@ -80,3 +82,6 @@ export const start = (src: AudioScheduledSourceNode, ...fxs: AudioNode[]) => {
 export const stop = (src: AudioScheduledSourceNode, ...fxs: AudioNode[]) => {
     src.stop();
 };
+
+export const effectTyp = ["gain", "pan", "highpass", "lowpass"] as const;
+export type EffectTyp = typeof effectTyp[number];
