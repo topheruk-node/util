@@ -3,8 +3,8 @@ import { LitElement, html } from 'lit';
 import { customElement, property, queryAssignedElements, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 import { ref, Ref, createRef } from 'lit/directives/ref.js';
-import { LitAudioTrackElement as LitAudioTrackElement } from './audio-track';
-import { LitInsertEffectElement } from './insert-effect';
+import { LitAudioTrackElement } from './audio-track';
+import { LitEffectInsertElement } from './effect-insert';
 import { drumSamplerStyles } from './templates-and-styles';
 
 declare global {
@@ -15,7 +15,7 @@ declare global {
 
 @customElement("lit-drum-sampler")
 export class LitDrumMachineElement extends LitElement {
-    @queryAssignedElements({ slot: "insert" }) listOfInserts!: LitInsertEffectElement[];
+    @queryAssignedElements({ slot: "insert" }) listOfInserts!: LitEffectInsertElement[];
 
     @queryAssignedElements({ slot: "track" }) listOfTracks!: LitAudioTrackElement[];
 
@@ -57,37 +57,41 @@ export class LitDrumMachineElement extends LitElement {
     }
 
     #onCacheValue(e: Event) {
-        let target = e.target as LitInsertEffectElement;
+        let target = e.target as LitEffectInsertElement;
         this.currentTrack.fxs.set(target.type, target.value);
     }
 
     async #onPlayback(e: Event) {
         let target = e.target as LitAudioTrackElement;
 
+        this.dbgCurrentTrackName = target.name;//TODO: render an icon maybe?
+
         let audioNodes = this.listOfInserts.flatMap(insert => {
-            insert.for === target.name
-                ? target.fxs.set(insert.type, insert.value)
-                : (insert.for = target.name) && (this.currentTrack = target);
+            if (insert.for !== target.name) {
+                insert.for = target.name;
+                this.currentTrack = target;
+            }
 
-            this.dbgCurrentTrackName = this.currentTrack.name;//TODO: render an icon maybe?
-
+            // im not too sure if this can be refactored at all
             const fx = createEffectNode(insert.type, insert.value = target.fxs.get(insert.type) ?? 0);
-            if (!(this.bus && target.name !== "bus")) return fx;
+            if (!this.bus || (target.name === "bus")) return fx;
 
             const busFx = createEffectNode(insert.type, this.busTrackRef.value!.fxs.get(insert.type) ?? 0);
             return [fx, busFx];
         });
 
-        if (!target.src) return;
-
-        const audio = await createBufferSource(target.src);
-        start(audio, ...audioNodes);
+        if (target.src) {
+            const audio = await createBufferSource(target.src);
+            start(audio, ...audioNodes);
+        }
     }
 
     render() {
         let bus = html`<lit-audio-track id="bus" ${ref(this.busTrackRef)} @play-back=${this.#onPlayback} name="bus"/>`;
 
-        return html`${when(this.bus, () => bus)}
+        return html`
+        ${when(this.bus, () => bus)}
+        
         <slot
             @cache-value=${this.#onCacheValue}
         name="insert"></slot>
@@ -99,10 +103,7 @@ export class LitDrumMachineElement extends LitElement {
         
         <br>
         [current selected track] ${this.dbgCurrentTrackName} 
-        
-        <br>
-        [audio node path] ${this.dbgAudioNodePath}
-    `;
+        `;
     }
 
     static styles = drumSamplerStyles;

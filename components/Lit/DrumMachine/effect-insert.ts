@@ -8,13 +8,13 @@ const customEvent = dispatchCustomEvent();
 
 declare global {
     interface HTMLElementTagNameMap {
-        "lit-effect-insert": LitInsertEffectElement;
+        "lit-effect-insert": LitEffectInsertElement;
     }
 }
 
 
 @customElement("lit-effect-insert")
-export class LitInsertEffectElement extends LitElement {
+export class LitEffectInsertElement extends LitElement {
     @property() type: Effect = "gain";//type Effect = "gain" | "pan" | "highpass" | "lowpass"
 
     @property({ type: Number }) value = 0;
