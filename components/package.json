@@ -1,9 +1,0 @@
-{
-    "name": "components",
-    "version": "1.0.0",
-    "main": "mod.ts",
-    "private": true,
-    "dependencies": {
-        "core": "^1.0.0"
-    }
-}

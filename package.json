@@ -1,17 +1,24 @@
 {
-    "name": "util",
-    "private": true,
-    "version": "0.0.0",
+    "name": "@topheruk/util",
+    "version": "0.0.1",
     "scripts": {
-        "dev": "vite",
-        "build": "tsc && vite build",
-        "preview": "vite preview"
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
-    "workspaces": [
+    "description": "I need to choose a testing package is:",
+    "main": "mod.ts",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/topheruk-node/util.git"
+    },
+    "keywords": [
+        "util",
         "core",
-        "components"
+        "std"
     ],
-    "devDependencies": {
-        "vite": "^2.8.4"
-    }
+    "author": "Rahim Afful-Brown",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/topheruk-node/util/issues"
+    },
+    "homepage": "https://github.com/topheruk-node/util#readme"
 }
