@@ -1,16 +1,11 @@
-import { BiTransform, Transform } from "../functional/mod";
-
-
-const ctx = new AudioContext();
+const defaultContext = new AudioContext();
 
 interface CreateEffectOptions {
     type?: BiquadFilterType;
     value: number;
 }
 
-type CreateBuffer = Transform<string, Promise<AudioBufferSourceNode>>;
-
-export const createOscillator = () => {
+export const createOscillator = (ctx = defaultContext) => {
     const osc = ctx.createOscillator();
     // let params = new AudioParam();
     osc.onended = () => {
@@ -21,7 +16,7 @@ export const createOscillator = () => {
 
 
 /** @FIXME seems to behave really slow */
-export const createBufferSource: CreateBuffer = async path => {
+export const createBufferSource = async (path: string, ctx = defaultContext) => {
     const data = await fetch(path);
     const arrayBuffer = await data.arrayBuffer();
     const audio = ctx.createBufferSource();
@@ -29,6 +24,11 @@ export const createBufferSource: CreateBuffer = async path => {
     return audio;
 };
 
+export const createBufferSourceUpdated = async (arrayBuffer: ArrayBuffer, ctx = defaultContext) => {
+    const audio = ctx.createBufferSource();
+    audio.buffer = await ctx.decodeAudioData(arrayBuffer);
+    return audio;
+};
 /**
  * If i make this a generic type where:
  * ```ts
@@ -40,7 +40,7 @@ export const createBufferSource: CreateBuffer = async path => {
  * ```
  * which is clearly wrong, but unsure how to get teh compiler to behave
  */
-type CreateEffect = BiTransform<AudioContext, CreateEffectOptions, AudioNode>;
+type CreateEffect = (ctx: AudioContext, opt: CreateEffectOptions) => AudioNode;
 
 const createBiquadFilter: CreateEffect = (ctx, { value, type }) => {
     let fx = ctx.createBiquadFilter();
@@ -62,7 +62,7 @@ const createGain: CreateEffect = (ctx, { value }) => {
 };
 
 // TODO: change signature -> ctx:AudioContext, {value:number, type:BiquadFilterType}
-export function createEffectNode(type: "gain" | "pan" | "lowpass" | "highpass", value: number) {
+export function createEffectNode(type: "gain" | "pan" | "lowpass" | "highpass", value: number, ctx = defaultContext) {
     switch (type) {
         case "lowpass":
         case "highpass": return createBiquadFilter(ctx, { type, value });
@@ -71,7 +71,7 @@ export function createEffectNode(type: "gain" | "pan" | "lowpass" | "highpass", 
     }
 }
 
-export const start = (src: AudioScheduledSourceNode, ...fxs: AudioNode[]) => {
+export function start(src: AudioScheduledSourceNode, ...fxs: AudioNode[]): void {
     [...fxs, src.context.destination].reduce((a, b) => a.connect(b), src);
     src.start();
 };
@@ -79,7 +79,7 @@ export const start = (src: AudioScheduledSourceNode, ...fxs: AudioNode[]) => {
 /**
  * FIXME: stop is already a function
  */
-export const stop = (src: AudioScheduledSourceNode, ...fxs: AudioNode[]) => {
+export const stop = (src: AudioScheduledSourceNode) => {
     src.stop();
 };
 

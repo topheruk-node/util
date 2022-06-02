@@ -4,3 +4,4 @@ export * from "./components/mod";
 export * from "./maths/mod";
 export * from "./collections/mod";
 export * from "./conditional/mod";
+export * from "./http/mod";
