@@ -24,6 +24,11 @@ export const createBufferSource = async (path: string, ctx = defaultContext) => 
     return audio;
 };
 
+// function foo(a: number, b: number, c: number): void
+function foo(a: number, b: number): void {
+    console.log(a, b);
+}
+
 export const createBufferSourceUpdated = async (arrayBuffer: ArrayBuffer, ctx = defaultContext) => {
     const audio = ctx.createBufferSource();
     audio.buffer = await ctx.decodeAudioData(arrayBuffer);
@@ -62,7 +67,8 @@ const createGain: CreateEffect = (ctx, { value }) => {
 };
 
 // TODO: change signature -> ctx:AudioContext, {value:number, type:BiquadFilterType}
-export function createEffectNode(type: "gain" | "pan" | "lowpass" | "highpass", value: number, ctx = defaultContext) {
+export function createEffectNode(type: EffectType, value: number, ctx = defaultContext) {
+    // console.log(type, value);
     switch (type) {
         case "lowpass":
         case "highpass": return createBiquadFilter(ctx, { type, value });
@@ -83,5 +89,5 @@ export const stop = (src: AudioScheduledSourceNode) => {
     src.stop();
 };
 
-export const effectTyp = ["gain", "pan", "highpass", "lowpass"] as const;
-export type EffectTyp = typeof effectTyp[number];
+export const effects = ["gain", "pan", "highpass", "lowpass"] as const;
+export type EffectType = typeof effects[number];
