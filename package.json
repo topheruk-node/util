@@ -1,5 +1,5 @@
 {
-    "name": "@topheruk/util",
+    "name": "@hyphenode/prelude",
     "version": "0.0.2",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
@@ -8,7 +8,7 @@
     "main": "mod.ts",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/topheruk-node/util.git"
+        "url": "git+https://github.com/hyphenode/prelude.git"
     },
     "keywords": [
         "util",
@@ -18,7 +18,7 @@
     "author": "Rahim Afful-Brown",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/topheruk-node/util/issues"
+        "url": "https://github.com/hyphenode/prelude/issues"
     },
-    "homepage": "https://github.com/topheruk-node/util#readme"
+    "homepage": "https://github.com/hyphenode/prelude#readme"
 }
